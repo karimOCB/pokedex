@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
 	"github.com/karimOCB/pokedex/internal/pokeapi"
 )
 
 type config struct {
 	Next     *string
 	Previous *string
-	Client *pokeapi.Client
+	Client   *pokeapi.Client
 }
 
 type cliCommand struct {
@@ -28,7 +29,7 @@ func startRepl(cfg *config) {
 		fmt.Printf("Pokedex > ")
 		scanner.Scan()
 		words := cleanInput(scanner.Text())
-		
+
 		if len(words) == 0 {
 			continue
 		}
@@ -64,14 +65,14 @@ func getCommand() map[string]cliCommand {
 			callback:    commandHelp,
 		},
 		"map": {
-			name: "map",
+			name:        "map",
 			description: "Displays 20 next locations",
-			callback: commandMap,
+			callback:    commandMapf,
 		},
 		"mapb": {
-			name: "mapb",
+			name:        "mapb",
 			description: "Displays 20 previous locations",
-			callback: commandMapb,
+			callback:    commandMapb,
 		},
 	}
 }
