@@ -2,9 +2,9 @@ package pokeapi
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
-	"fmt"
 )
 
 func (c *Client) ListLocations(url *string) (Locations, error) {
@@ -16,7 +16,14 @@ func (c *Client) ListLocations(url *string) (Locations, error) {
 	} else {
 		actualURL = *url
 	}
-	
+
+	val, ok := c.cache.Get(actualURL)
+	if ok {
+		if err := json.Unmarshal(val, &locations); err != nil {
+			return locations, err
+		}
+	}
+
 	req, err := http.NewRequest("GET", actualURL, nil)
 	if err != nil {
 		return locations, err
@@ -36,10 +43,12 @@ func (c *Client) ListLocations(url *string) (Locations, error) {
 	if err != nil {
 		return locations, err
 	}
-	
+
 	if err := json.Unmarshal(data, &locations); err != nil {
 		return locations, err
 	}
+
+	c.cache.Add(actualURL, data)
 
 	return locations, nil
 }

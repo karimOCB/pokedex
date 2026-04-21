@@ -45,5 +45,15 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 }
 
 func (c *Cache) reapLoop() {
-	// TODO
+	ticker := time.NewTicker(c.interval)
+	for range ticker.C {
+		c.mu.Lock()
+		for url, entry := range c.cachedURLs {
+			elapsedTime := time.Since(entry.createdAt)
+			if elapsedTime > c.interval {
+				delete(c.cachedURLs, url)
+			}
+		}
+		c.mu.Unlock()
+	}
 }
