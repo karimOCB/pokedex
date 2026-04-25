@@ -4,14 +4,14 @@ import (
 	"fmt"
 )
 
-func commandExplore(cfg *config, parameters ...string) error {
-	if len(parameters) == 0 {
+func commandExplore(cfg *config, args ...string) error {
+	if len(args) == 0 {
 		fmt.Println("A location area to explore is needed. Try again.")
 		return nil
 	}
-	fmt.Printf("Exploring %s...\n", parameters[0])
+	fmt.Printf("Exploring %s...\n", args[0])
 
-	encounters, err := cfg.Client.LocationExplore(parameters[0])
+	encounters, err := cfg.Client.LocationExplore(args[0])
 	if err != nil {
 		return err
 	}
