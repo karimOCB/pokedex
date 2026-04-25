@@ -9,7 +9,23 @@ func commandExplore(cfg *config, parameters ...string) error {
 		fmt.Println("A location area to explore is needed. Try again.")
 		return nil
 	}
-	fmt.Printf("Exploring %s...", parameters[0])
+	fmt.Printf("Exploring %s...\n", parameters[0])
+
+	encounters, err := cfg.Client.LocationExplore(parameters[0])
+	if err != nil {
+		return err
+	}
+
+	if len(encounters.PokemonEncounters) == 0 {
+		fmt.Println("No pokemon found in this area")
+		return nil
+	}
+
+	fmt.Println("Found Pokemon:")
+	for _, pokemon := range encounters.PokemonEncounters {
+		fmt.Printf(" - %s\n", pokemon.Pokemon.Name)
+
+	}
 
 	return nil
 }
