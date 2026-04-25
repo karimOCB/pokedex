@@ -28,6 +28,7 @@ func commandCatch(cfg *config, args ...string) error {
 
 	if rand.Intn(baseExp) < 35 {
 		fmt.Printf("%s was caught!\n", name)
+		fmt.Println("You may now inspect it with the inspect command.")
 		cfg.CaughtPokemons[name] = pokemonInfo
 		return nil
 	}

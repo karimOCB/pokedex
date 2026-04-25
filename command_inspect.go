@@ -4,7 +4,8 @@ import "fmt"
 
 func commandInspect(cfg *config, args ...string) error {
 	if len(args) == 0 {
-		return fmt.Errorf("A pokemon name is needed to inspect. Try again")
+		fmt.Println("A pokemon name is needed to inspect. Try again")
+		return nil
 	}
 
 	name := args[0]
