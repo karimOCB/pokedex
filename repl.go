@@ -37,11 +37,11 @@ func startRepl(cfg *config) {
 
 		cmd, ok := registry[words[0]]
 		if ok {
-			parameters := []string{}
+			args := []string{}
 			if len(words) > 1 {
-				parameters = words[1:]
+				args = words[1:]
 			}
-			err := cmd.callback(cfg, parameters...)
+			err := cmd.callback(cfg, args...)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -88,6 +88,11 @@ func getCommand() map[string]cliCommand {
 			name:        "catch",
 			description: "Try to catch a pokemon",
 			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Display the info of an already caught pokemon",
+			callback:    commandInspect,
 		},
 	}
 }
