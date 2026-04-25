@@ -19,10 +19,12 @@ func (c *Client) ListLocations(url *string) (Locations, error) {
 
 	val, ok := c.cache.Get(actualURL)
 	if ok {
-		if err := json.Unmarshal(val, &locations); err != nil {
+		if err := json.Unmarshal(val, &locations); err == nil {
+			fmt.Println("cache hit!")
 			return locations, err
 		}
 	}
+	fmt.Println("cache miss, fetching...")
 
 	req, err := http.NewRequest("GET", actualURL, nil)
 	if err != nil {
