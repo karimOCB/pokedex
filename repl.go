@@ -1,11 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"strings"
 
+	"github.com/chzyer/readline"
 	"github.com/karimOCB/pokedex/internal/pokeapi"
 )
 
@@ -14,6 +13,7 @@ type config struct {
 	Previous       *string
 	Client         *pokeapi.Client
 	CaughtPokemons map[string]pokeapi.Pokemon
+	RlInstance     *readline.Instance
 }
 
 type cliCommand struct {
@@ -23,14 +23,16 @@ type cliCommand struct {
 }
 
 func startRepl(cfg *config) {
-	scanner := bufio.NewScanner(os.Stdin)
 	registry := getCommand()
 
 	for {
-		fmt.Printf("Pokedex > ")
-		scanner.Scan()
-		words := cleanInput(scanner.Text())
+		userInput, err := cfg.RlInstance.Readline()
+		if err != nil {
+			fmt.Printf("Could not get the input. %s", err)
+			break
+		}
 
+		words := cleanInput(userInput)
 		if len(words) == 0 {
 			continue
 		}
