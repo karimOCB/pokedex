@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math/rand/v2"
 	"fmt"
 	"time"
 
@@ -15,7 +16,7 @@ func main() {
 		Prompt: "Pokedex > ",
 	})
 	if err != nil {
-		fmt.Printf("Couln't create new readline %s", err)
+		fmt.Printf("Couldn't create new readline %s", err)
 		return
 	}
 
@@ -25,8 +26,29 @@ func main() {
 		Client:         client,
 		CaughtPokemons: map[string]pokeapi.Pokemon{},
 		RlInstance:     rl,
+		CurrentOpponent: nil,
 	}
 	defer cfg.RlInstance.Close()
-
+	
+	go randomOpponent(&cfg)
 	startRepl(&cfg)
+}
+
+func randomOpponent(cfg *config) {
+	ticker := time.NewTicker(10 * time.Second)
+	for range ticker.C {
+		if len(cfg.CaughtPokemons) == 0 || cfg.CurrentOpponent != nil {
+			continue
+		} 
+
+		pokemonInfo, err := cfg.Client.PokemonCatch(rand.IntN(1025))
+		if err != nil {
+			continue
+		}
+
+		cfg.Mux.Lock()
+		cfg.CurrentOpponent = &pokemonInfo
+		fmt.Fprintln(cfg.RlInstance, "\n A wild Pokemon has appeared!")
+		cfg.Mux.Unlock()
+	}
 }

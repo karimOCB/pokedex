@@ -5,13 +5,28 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 )
 
-func (c *Client) PokemonCatch(pokemonName string) (Pokemon, error) {
-	baseURL := "https://pokeapi.co/api/v2/pokemon/"
-	actualURL := baseURL + pokemonName
-	var pokemonInfo Pokemon
+type IntOrString interface {
+	int | string
+}
 
+func (c *Client) PokemonCatch(pokemonIdOrName any) (Pokemon, error) {
+	var identifier string
+	var pokemonInfo Pokemon
+	switch v := pokemonIdOrName.(type) {
+	case int:
+		identifier = strconv.Itoa(v)
+	case string: 
+		identifier = v
+	default:
+		return pokemonInfo, fmt.Errorf("Type: %t is not accepted. It must be int or string.", pokemonIdOrName)
+	}
+
+	baseURL := "https://pokeapi.co/api/v2/pokemon/"
+	actualURL := baseURL + identifier
+	
 	val, ok := c.cache.Get(actualURL)
 	if ok {
 		if err := json.Unmarshal(val, &pokemonInfo); err != nil {

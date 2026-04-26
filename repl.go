@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/chzyer/readline"
 	"github.com/karimOCB/pokedex/internal/pokeapi"
@@ -13,6 +14,8 @@ type config struct {
 	Previous       *string
 	Client         *pokeapi.Client
 	CaughtPokemons map[string]pokeapi.Pokemon
+	Mux *sync.Mutex
+	CurrentOpponent *pokeapi.Pokemon
 	RlInstance     *readline.Instance
 }
 
@@ -36,6 +39,17 @@ func startRepl(cfg *config) {
 		if len(words) == 0 {
 			continue
 		}
+
+		cfg.Mux.Lock()
+		if cfg.CurrentOpponent != nil && (words[0] != "battle" && words[0] != "run" && words[0] != "help" && words[0] != "pokedex") {
+			fmt.Printf("Decide between battle or run against the oponent: %s \n", cfg.CurrentOpponent.Name)
+			fmt.Println("You can check your pokedex and choose one for the battle.")
+			fmt.Println("You can also type the command help if you do not know what to do.")
+			// TODO: Let the user do a shallow inspection of the enemy
+			cfg.Mux.Unlock()
+			continue
+		}
+		cfg.Mux.Unlock()
 
 		cmd, ok := registry[words[0]]
 		if ok {
@@ -100,6 +114,16 @@ func getCommand() map[string]cliCommand {
 			name:        "pokedex",
 			description: "Display the pokemons you have in your pokedex",
 			callback:    commandPokedex,
+		},
+		"battle": {
+			name:        "battle",
+			description: "Battle and get a new pokemon.",
+			callback:    commandBattle,
+		},
+		"run": {
+			name:        "run",
+			description: "Just run a continue with your easy life.",
+			callback:    commandRun,
 		},
 	}
 }
