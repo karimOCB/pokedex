@@ -10,13 +10,13 @@ import (
 )
 
 type config struct {
-	Next           *string
-	Previous       *string
-	Client         *pokeapi.Client
-	CaughtPokemons map[string]pokeapi.Pokemon
-	Mux *sync.Mutex
+	Next            *string
+	Previous        *string
+	Client          *pokeapi.Client
+	CaughtPokemons  map[string]pokeapi.Pokemon
+	Mux             sync.Mutex
 	CurrentOpponent *pokeapi.Pokemon
-	RlInstance     *readline.Instance
+	RlInstance      *readline.Instance
 }
 
 type cliCommand struct {
@@ -123,7 +123,7 @@ func getCommand() map[string]cliCommand {
 		"run": {
 			name:        "run",
 			description: "Just run a continue with your easy life.",
-			callback:    commandRun,
+			callback:    commandBattle, // TODO
 		},
 	}
 }
