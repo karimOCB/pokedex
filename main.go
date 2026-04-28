@@ -35,12 +35,13 @@ func main() {
 }
 
 func randomOpponent(cfg *config) {
-	ticker := time.NewTicker(10 * time.Second)
-	for range ticker.C {
+	for {
+		waitTime := rand.IntN(111) + 10
 
 		cfg.Mux.Lock()
 		if len(cfg.CaughtPokemons) == 0 || cfg.CurrentOpponent != nil {
 			cfg.Mux.Unlock()
+			time.Sleep(time.Duration(waitTime) * time.Second)
 			continue
 		}
 
@@ -48,12 +49,16 @@ func randomOpponent(cfg *config) {
 
 		pokemonInfo, err := cfg.Client.PokemonCatch(rand.IntN(1025) + 1)
 		if err != nil {
+			time.Sleep(time.Duration(waitTime) * time.Second)
 			continue
 		}
 
 		cfg.Mux.Lock()
 		cfg.CurrentOpponent = &pokemonInfo
 		cfg.Mux.Unlock()
-		fmt.Fprintln(cfg.RlInstance, "\n A wild Pokemon has appeared!")
+		fmt.Fprintf(cfg.RlInstance, "\nA wild Pokemon has appeared!\n")
+		fmt.Fprintf(cfg.RlInstance, "\nYou can battle or run away!\n\n")
+
+		time.Sleep(time.Duration(waitTime) * time.Second)
 	}
 }

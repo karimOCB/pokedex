@@ -122,8 +122,8 @@ func getCommand() map[string]cliCommand {
 		},
 		"run": {
 			name:        "run",
-			description: "Just run a continue with your easy life.",
-			callback:    commandBattle, // TODO
+			description: "Just run and continue with your easy life.",
+			callback:    commandRun,
 		},
 	}
 }
